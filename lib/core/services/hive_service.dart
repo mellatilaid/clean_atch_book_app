@@ -1,14 +1,24 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-abstract class HiveService<T> {
+class HiveService<T> {
   final String boxName;
   final TypeAdapter<T> adapter;
   HiveService(this.boxName, this.adapter);
 
+  static Future<void> initialize() async {
+    await Hive.initFlutter();
+  }
+
+  void _registerAdapter() {
+    if (!Hive.isAdapterRegistered(adapter.typeId)) {
+      Hive.registerAdapter(adapter);
+    }
+  }
+
   Future<Box<T>> openBox() async {
+    _registerAdapter();
     // Check if the box is already open
     if (!Hive.isBoxOpen(boxName)) {
-      Hive.registerAdapter(adapter);
       return await Hive.openBox<T>(boxName);
     } else {
       return Hive.box<T>(boxName);
@@ -17,7 +27,12 @@ abstract class HiveService<T> {
 
   Future<void> addItem(String key, T item) async {
     var box = await openBox();
-    await box.put(key, item);
+    await box.add(item);
+  }
+
+  Future<void> addAll(List<T> item) async {
+    var box = await openBox();
+    await box.addAll(item);
   }
 
   Future<T?> getItem(String key) async {
@@ -32,7 +47,7 @@ abstract class HiveService<T> {
 
   Future<void> updateItem(String key, T item) async {
     var box = await openBox();
-    await box.put(key, item);
+    await box.add(item);
   }
 
   Future<List<T>> getAllItems() async {

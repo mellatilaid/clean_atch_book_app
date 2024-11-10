@@ -1,10 +1,13 @@
 import 'package:bookly/Features/home/data/models/product_model/product_model.dart';
+import 'package:bookly/Features/home/domain/entities/product_entity.dart';
+import 'package:bookly/constants.dart';
 import 'package:bookly/core/services/api_service.dart';
 import 'package:bookly/core/utils/set_up_service_locator.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class HomeRemoteDataSourse {
   Future<List<String>> fetchProductsCategories();
-  Future<List<ProductModel>> fetchProducts();
+  Future<List<ProductEntity>> fetchProducts();
 }
 
 class HomeRemoteDataSourseImp extends HomeRemoteDataSourse {
@@ -21,12 +24,20 @@ class HomeRemoteDataSourseImp extends HomeRemoteDataSourse {
   }
 
   @override
-  Future<List<ProductModel>> fetchProducts() async {
+  Future<List<ProductEntity>> fetchProducts() async {
     var data = await _apiService.get(endPoint: 'products');
-    final List<ProductModel> products = [];
+    final List<ProductEntity> products = [];
     for (var element in data) {
       products.add(ProductModel.fromJson(element));
     }
+
+    addAllProducts(products);
+
     return products;
+  }
+
+  void addAllProducts(List<ProductEntity> products) {
+    final Box box = Hive.box<ProductEntity>(kProductsBox);
+    box.addAll(products);
   }
 }
