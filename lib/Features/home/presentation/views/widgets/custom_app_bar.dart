@@ -1,7 +1,7 @@
-import 'package:bookly/core/utils/app_router.dart';
+import 'package:bookly/Features/home/presentation/manager/products_cubit/products_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../../core/utils/assets.dart';
 
@@ -21,7 +21,8 @@ class CustomAppBar extends StatelessWidget {
           const Spacer(),
           IconButton(
               onPressed: () {
-                GoRouter.of(context).push(AppRouter.kSearchView);
+                BlocProvider.of<ProductsCubit>(context).getProductsCategories();
+                //GoRouter.of(context).push(AppRouter.kSearchView);
               },
               icon: const Icon(
                 FontAwesomeIcons.magnifyingGlass,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bookly/Features/home/data/models/product_model/product_model.dart';
 import 'package:bookly/Features/home/domain/entities/product_entity.dart';
 import 'package:bookly/constants.dart';
@@ -30,7 +32,7 @@ class HomeRemoteDataSourseImp extends HomeRemoteDataSourse {
     for (var element in data) {
       products.add(ProductModel.fromJson(element));
     }
-
+    log(products.length.toString());
     addAllProducts(products);
 
     return products;
